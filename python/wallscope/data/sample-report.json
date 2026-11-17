@@ -1,0 +1,442 @@
+{
+  "schemaVersion": "1.0",
+  "tool": "wallscope",
+  "toolVersion": "1.0.0",
+  "host": "SAMPLE-WORKSTATION",
+  "os": "Microsoft Windows 10.0.22631 (sample data)",
+  "startedUtc": "2026-11-17T14:02:11+00:00",
+  "finishedUtc": "2026-11-17T14:02:39+00:00",
+  "localAudit": {
+    "platform": "windows",
+    "firewallActive": true,
+    "elevated": true,
+    "backends": [
+      {
+        "name": "windows-defender-firewall",
+        "state": "active",
+        "detail": "2 of 3 profiles enabled; 3 enabled inbound allow rules.",
+        "profiles": [
+          {
+            "name": "Domain",
+            "enabled": true,
+            "defaultInbound": "block",
+            "defaultOutbound": "allow"
+          },
+          {
+            "name": "Private",
+            "enabled": true,
+            "defaultInbound": "block",
+            "defaultOutbound": "allow"
+          },
+          {
+            "name": "Public",
+            "enabled": false,
+            "defaultInbound": "block",
+            "defaultOutbound": "allow"
+          }
+        ],
+        "rules": [
+          {
+            "name": "Remote Desktop - User Mode (TCP-In)",
+            "source": "windows-defender-firewall",
+            "direction": "inbound",
+            "action": "allow",
+            "enabled": true,
+            "protocol": "TCP",
+            "localPorts": "3389",
+            "remoteAddresses": "Any",
+            "profile": "Any"
+          },
+          {
+            "name": "Core Networking - DNS (UDP-Out) helper",
+            "source": "windows-defender-firewall",
+            "direction": "inbound",
+            "action": "allow",
+            "enabled": true,
+            "protocol": "UDP",
+            "localPorts": "5353",
+            "remoteAddresses": "LocalSubnet",
+            "profile": "Private"
+          },
+          {
+            "name": "Team chat app",
+            "source": "windows-defender-firewall",
+            "direction": "inbound",
+            "action": "allow",
+            "enabled": true,
+            "protocol": "any",
+            "localPorts": "any",
+            "remoteAddresses": "Any",
+            "profile": "Any",
+            "program": "C:\\Program Files\\TeamChat\\chat.exe"
+          }
+        ]
+      }
+    ]
+  },
+  "networkProbes": [
+    {
+      "target": "web01.example.com",
+      "resolvedAddress": "203.0.113.20",
+      "ports": [
+        {
+          "port": 21,
+          "state": "filtered",
+          "reason": "no-response",
+          "latencyMs": 1500.0,
+          "service": "ftp"
+        },
+        {
+          "port": 22,
+          "state": "filtered",
+          "reason": "no-response",
+          "latencyMs": 1500.0,
+          "service": "ssh"
+        },
+        {
+          "port": 23,
+          "state": "filtered",
+          "reason": "no-response",
+          "latencyMs": 1500.0,
+          "service": "telnet"
+        },
+        {
+          "port": 25,
+          "state": "filtered",
+          "reason": "no-response",
+          "latencyMs": 1500.0,
+          "service": "smtp"
+        },
+        {
+          "port": 53,
+          "state": "filtered",
+          "reason": "no-response",
+          "latencyMs": 1500.0,
+          "service": "dns"
+        },
+        {
+          "port": 80,
+          "state": "open",
+          "reason": "syn-ack",
+          "latencyMs": 18.6,
+          "service": "http"
+        },
+        {
+          "port": 443,
+          "state": "open",
+          "reason": "syn-ack",
+          "latencyMs": 18.6,
+          "service": "https"
+        },
+        {
+          "port": 445,
+          "state": "filtered",
+          "reason": "no-response",
+          "latencyMs": 1500.0,
+          "service": "smb"
+        },
+        {
+          "port": 3306,
+          "state": "filtered",
+          "reason": "no-response",
+          "latencyMs": 1500.0,
+          "service": "mysql"
+        },
+        {
+          "port": 3389,
+          "state": "filtered",
+          "reason": "no-response",
+          "latencyMs": 1500.0,
+          "service": "rdp"
+        },
+        {
+          "port": 5432,
+          "state": "filtered",
+          "reason": "no-response",
+          "latencyMs": 1500.0,
+          "service": "postgresql"
+        },
+        {
+          "port": 8080,
+          "state": "filtered",
+          "reason": "no-response",
+          "latencyMs": 1500.0,
+          "service": "http-proxy"
+        },
+        {
+          "port": 8443,
+          "state": "filtered",
+          "reason": "no-response",
+          "latencyMs": 1500.0,
+          "service": "https-alt"
+        }
+      ],
+      "open": 2,
+      "closed": 0,
+      "filtered": 11,
+      "verdict": "defaultDropLikely",
+      "explanation": "2 port(s) are open and the other 11 got no answer at all. That pattern matches a default-drop firewall that only lets through the published services."
+    },
+    {
+      "target": "db01.example.com",
+      "resolvedAddress": "203.0.113.35",
+      "ports": [
+        {
+          "port": 21,
+          "state": "closed",
+          "reason": "rst",
+          "latencyMs": 18.6,
+          "service": "ftp"
+        },
+        {
+          "port": 22,
+          "state": "open",
+          "reason": "syn-ack",
+          "latencyMs": 18.6,
+          "service": "ssh"
+        },
+        {
+          "port": 23,
+          "state": "closed",
+          "reason": "rst",
+          "latencyMs": 18.6,
+          "service": "telnet"
+        },
+        {
+          "port": 25,
+          "state": "closed",
+          "reason": "rst",
+          "latencyMs": 18.6,
+          "service": "smtp"
+        },
+        {
+          "port": 53,
+          "state": "closed",
+          "reason": "rst",
+          "latencyMs": 18.6,
+          "service": "dns"
+        },
+        {
+          "port": 80,
+          "state": "closed",
+          "reason": "rst",
+          "latencyMs": 18.6,
+          "service": "http"
+        },
+        {
+          "port": 443,
+          "state": "closed",
+          "reason": "rst",
+          "latencyMs": 18.6,
+          "service": "https"
+        },
+        {
+          "port": 445,
+          "state": "closed",
+          "reason": "rst",
+          "latencyMs": 18.6,
+          "service": "smb"
+        },
+        {
+          "port": 3306,
+          "state": "open",
+          "reason": "syn-ack",
+          "latencyMs": 18.6,
+          "service": "mysql"
+        },
+        {
+          "port": 3389,
+          "state": "open",
+          "reason": "syn-ack",
+          "latencyMs": 18.6,
+          "service": "rdp"
+        },
+        {
+          "port": 5432,
+          "state": "closed",
+          "reason": "rst",
+          "latencyMs": 18.6,
+          "service": "postgresql"
+        },
+        {
+          "port": 8080,
+          "state": "closed",
+          "reason": "rst",
+          "latencyMs": 18.6,
+          "service": "http-proxy"
+        },
+        {
+          "port": 8443,
+          "state": "closed",
+          "reason": "rst",
+          "latencyMs": 18.6,
+          "service": "https-alt"
+        }
+      ],
+      "open": 3,
+      "closed": 10,
+      "filtered": 0,
+      "verdict": "noFilteringObserved",
+      "explanation": "Every probed port answered directly (3 open, 10 closed with RST). Nothing in the path dropped the probes."
+    }
+  ],
+  "wafResults": [
+    {
+      "url": "https://www.example.com/",
+      "reachable": true,
+      "activeProbe": true,
+      "baselineStatus": 200,
+      "provocationStatus": 403,
+      "detected": true,
+      "genericBlockingObserved": true,
+      "matches": [
+        {
+          "name": "Cloudflare",
+          "vendor": "Cloudflare, Inc.",
+          "kind": "cdn-waf",
+          "confidence": 100,
+          "evidence": [
+            "header server in normal response",
+            "header cf-ray in normal response",
+            "cookie __cf_bm in normal response",
+            "block-page text in test response"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "https://legacy.example.com/",
+      "reachable": true,
+      "activeProbe": true,
+      "baselineStatus": 200,
+      "provocationStatus": 200,
+      "detected": false,
+      "genericBlockingObserved": false,
+      "matches": []
+    }
+  ],
+  "findings": [
+    {
+      "id": "LOCAL-002",
+      "module": "local",
+      "severity": "critical",
+      "title": "Firewall profile 'Public' is disabled",
+      "detail": "The Public profile of Windows Defender Firewall is turned off, so no inbound filtering applies on networks of that type.",
+      "remediation": "Set-NetFirewallProfile -Profile Public -Enabled True",
+      "evidence": {
+        "backend": "windows-defender-firewall",
+        "profile": "Public"
+      }
+    },
+    {
+      "id": "LOCAL-004",
+      "module": "local",
+      "severity": "high",
+      "title": "Sensitive service open to any address (3389/rdp)",
+      "detail": "'Remote Desktop - User Mode (TCP-In)' allows inbound 3389/rdp from any source address.",
+      "remediation": "Limit the rule to trusted source ranges (management network, VPN) or remove it.",
+      "evidence": {
+        "backend": "windows-defender-firewall",
+        "rule": "Remote Desktop - User Mode (TCP-In)",
+        "ports": "3389",
+        "protocol": "TCP",
+        "remote": "Any",
+        "profile": "Any"
+      }
+    },
+    {
+      "id": "NET-003",
+      "module": "network",
+      "severity": "high",
+      "target": "db01.example.com",
+      "title": "Sensitive service reachable: 3306/mysql",
+      "detail": "Port 3306 (mysql) accepted a connection from this vantage point.",
+      "remediation": "Restrict this port to trusted source ranges at the firewall, or close it if it is not needed.",
+      "evidence": {
+        "port": "3306",
+        "reason": "syn-ack"
+      }
+    },
+    {
+      "id": "NET-003",
+      "module": "network",
+      "severity": "high",
+      "target": "db01.example.com",
+      "title": "Sensitive service reachable: 3389/rdp",
+      "detail": "Port 3389 (rdp) accepted a connection from this vantage point.",
+      "remediation": "Restrict this port to trusted source ranges at the firewall, or close it if it is not needed.",
+      "evidence": {
+        "port": "3389",
+        "reason": "syn-ack"
+      }
+    },
+    {
+      "id": "NET-003",
+      "module": "network",
+      "severity": "medium",
+      "target": "db01.example.com",
+      "title": "Sensitive service reachable: 22/ssh",
+      "detail": "Port 22 (ssh) accepted a connection from this vantage point.",
+      "remediation": "Restrict this port to trusted source ranges at the firewall, or close it if it is not needed.",
+      "evidence": {
+        "port": "22",
+        "reason": "syn-ack"
+      }
+    },
+    {
+      "id": "WAF-002",
+      "module": "waf",
+      "severity": "medium",
+      "target": "https://legacy.example.com/",
+      "title": "No web application firewall detected",
+      "detail": "No known WAF fingerprint matched and a request carrying common attack markers was served normally.",
+      "remediation": "Place internet-facing web applications behind a WAF, or confirm blocking mode is enabled on the existing one.",
+      "evidence": {
+        "normalStatus": "200",
+        "testStatus": "200"
+      }
+    },
+    {
+      "id": "NET-002",
+      "module": "network",
+      "severity": "low",
+      "target": "db01.example.com",
+      "title": "No packet filtering observed",
+      "detail": "Every probed port answered directly (3 open, 10 closed with RST). Nothing in the path dropped the probes. Either no firewall protects these ports from this vantage point, or it rejects with RST instead of dropping.",
+      "remediation": "Confirm a firewall with a default-deny policy sits between untrusted networks and this host.",
+      "evidence": {
+        "open": "3",
+        "closed": "10",
+        "filtered": "0",
+        "address": "203.0.113.35"
+      }
+    },
+    {
+      "id": "NET-001",
+      "module": "network",
+      "severity": "info",
+      "target": "web01.example.com",
+      "title": "Default-drop firewall likely",
+      "detail": "2 port(s) are open and the other 11 got no answer at all. That pattern matches a default-drop firewall that only lets through the published services.",
+      "evidence": {
+        "open": "2",
+        "closed": "0",
+        "filtered": "11",
+        "address": "203.0.113.20"
+      }
+    },
+    {
+      "id": "WAF-001",
+      "module": "waf",
+      "severity": "info",
+      "target": "https://www.example.com/",
+      "title": "Cloudflare detected (100% confidence)",
+      "detail": "Fingerprints for Cloudflare by Cloudflare, Inc. matched: header server in normal response; header cf-ray in normal response; cookie __cf_bm in normal response; block-page text in test response.",
+      "evidence": {
+        "product": "Cloudflare",
+        "kind": "cdn-waf",
+        "confidence": "100"
+      }
+    }
+  ]
+}

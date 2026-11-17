@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  engine:
+    name: C# engine (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet build WallScope.sln -c Release
+      - run: dotnet test WallScope.sln -c Release --no-build
+      - name: Smoke test the CLI
+        run: dotnet src/FirewallDetector.Cli/bin/Release/net8.0/wallscope.dll scan --local --targets 127.0.0.1 --ports 22,80 --format json
+
+  platform:
+    name: Python platform layer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e "python[dev]"
+      - run: pytest
+        working-directory: python
+
+  dashboard:
+    name: TypeScript dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+        working-directory: dashboard
+      - run: npm run build
+        working-directory: dashboard
+      - name: Built files are committed and up to date
+        run: git diff --exit-code -- python/wallscope/web

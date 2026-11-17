@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>wallscope</AssemblyName>
+    <RootNamespace>FirewallDetector.Cli</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../FirewallDetector.Core/FirewallDetector.Core.csproj" />
+  </ItemGroup>
+</Project>

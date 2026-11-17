@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WallScope</title>
+  <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <canvas id="backdrop" aria-hidden="true"></canvas>
+
+  <!-- Sign-in / first-run setup -->
+  <main id="auth" class="auth" hidden>
+    <section class="auth-hero">
+      <img class="auth-logo" src="/static/logo.svg" alt="">
+      <h1>WallScope</h1>
+      <p class="byline">By ZaKari Perry</p>
+      <p class="tagline">See every wall between you and the network. Audit host firewalls, find packet filters in the path, and identify web application firewalls from one console.</p>
+      <ul class="auth-points">
+        <li><span class="dot"></span>Local firewall audit for Windows and Linux</li>
+        <li><span class="dot"></span>Network filtering detection</li>
+        <li><span class="dot"></span>WAF fingerprinting with 19 product signatures</li>
+      </ul>
+    </section>
+    <section class="auth-card" aria-labelledby="auth-title">
+      <h2 id="auth-title">Sign in</h2>
+      <p id="auth-sub" class="muted">Use your operator account.</p>
+      <form id="auth-form" novalidate>
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" spellcheck="false" required>
+        <label for="password">Password</label>
+        <div class="password-row">
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+          <button type="button" id="toggle-password" class="ghost small" aria-label="Show password">Show</button>
+        </div>
+        <div id="confirm-row" hidden>
+          <label for="confirm">Confirm password</label>
+          <input id="confirm" name="confirm" type="password" autocomplete="new-password">
+        </div>
+        <p id="auth-error" class="form-error" role="alert" hidden></p>
+        <button id="auth-submit" class="primary wide" type="submit">Sign in</button>
+      </form>
+      <p class="fineprint">Accounts live on this computer only. Passwords are stored as salted hashes.</p>
+    </section>
+  </main>
+
+  <!-- Console -->
+  <div id="console" class="console" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <img src="/static/logo.svg" alt="">
+        <div>
+          <strong>WallScope</strong>
+          <span>By ZaKari Perry</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span id="pill-engine" class="pill">engine</span>
+        <span id="pill-assistant" class="pill">assistant</span>
+        <span id="who" class="who"></span>
+        <button id="signout" class="ghost small">Sign out</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel actions" aria-label="Run a scan">
+        <h2>Run a scan</h2>
+
+        <div class="action">
+          <h3>This machine</h3>
+          <p class="muted">Is the host firewall on, and which rules are risky?</p>
+          <button id="run-local" class="primary wide">Audit this machine</button>
+        </div>
+
+        <div class="action">
+          <h3>A host</h3>
+          <p class="muted">Is something filtering traffic in front of it?</p>
+          <label for="targets">Host or IP</label>
+          <input id="targets" placeholder="127.0.0.1" spellcheck="false">
+          <label for="ports">Ports</label>
+          <input id="ports" value="top" spellcheck="false">
+          <button id="run-probe" class="primary wide">Probe host</button>
+        </div>
+
+        <div class="action">
+          <h3>A website</h3>
+          <p class="muted">Is a web application firewall protecting it?</p>
+          <label for="urls">URL</label>
+          <input id="urls" placeholder="https://your-site.example" spellcheck="false">
+          <label class="check"><input type="checkbox" id="passive"> Passive only (send no test request)</label>
+          <button id="run-waf" class="primary wide">Check website</button>
+        </div>
+
+        <label class="check authorize"><input type="checkbox" id="authorized"> I own these systems or have permission to test them</label>
+
+        <div class="action-row">
+          <button id="run-all" class="secondary">Run everything</button>
+          <button id="load-sample" class="ghost">Load sample data</button>
+        </div>
+      </aside>
+
+      <section class="main" aria-live="polite">
+        <div id="empty" class="panel empty">
+          <div class="radar idle" aria-hidden="true"><span></span><span></span><span></span><i></i></div>
+          <h2>No scan yet</h2>
+          <p class="muted">Pick something to scan on the left, or load the sample data to look around.</p>
+        </div>
+
+        <div id="results" hidden>
+          <div class="summary">
+            <div class="panel gauge-card">
+              <svg class="gauge" viewBox="0 0 120 120" role="img" aria-labelledby="gauge-label">
+                <circle class="gauge-track" cx="60" cy="60" r="50"></circle>
+                <circle id="gauge-arc" class="gauge-arc" cx="60" cy="60" r="50"></circle>
+              </svg>
+              <div class="gauge-text">
+                <b id="score">0</b>
+                <span id="gauge-label">risk score</span>
+              </div>
+              <div class="gauge-side">
+                <div id="grade" class="grade">A</div>
+                <div id="posture" class="muted">Strong</div>
+                <div id="report-label" class="report-label"></div>
+              </div>
+            </div>
+            <div id="tiles" class="tiles"></div>
+          </div>
+
+          <div class="panel">
+            <div class="tabs" role="tablist">
+              <button class="tab active" data-tab="findings" role="tab">Findings</button>
+              <button class="tab" data-tab="network" role="tab">Network</button>
+              <button class="tab" data-tab="web" role="tab">Websites</button>
+              <button class="tab" data-tab="local" role="tab">This machine</button>
+              <button class="tab" data-tab="history" role="tab">History</button>
+              <span class="tab-spacer"></span>
+              <div class="export">
+                <span class="muted">Export</span>
+                <a id="export-html" class="chip-link" href="#">HTML</a>
+                <a id="export-md" class="chip-link" href="#">Markdown</a>
+                <a id="export-sarif" class="chip-link" href="#">SARIF</a>
+                <a id="export-json" class="chip-link" href="#">JSON</a>
+              </div>
+            </div>
+            <div id="tab-body" class="tab-body"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel scout" aria-label="Scout assistant">
+        <div class="scout-head">
+          <div id="scout-avatar" class="scout-avatar" aria-hidden="true"></div>
+          <div>
+            <strong>Scout</strong>
+            <span id="scout-status" class="muted">Ready when you are</span>
+          </div>
+        </div>
+        <div id="chat-log" class="chat-log" aria-live="polite"></div>
+        <div id="chat-suggestions" class="suggestions"></div>
+        <form id="chat-form" class="chat-form">
+          <input id="chat-input" placeholder="Ask about your scan" autocomplete="off" maxlength="2000">
+          <button class="primary" type="submit" aria-label="Send">Send</button>
+        </form>
+      </aside>
+    </div>
+  </div>
+
+  <div id="scanning" class="overlay" hidden>
+    <div class="overlay-card">
+      <div class="radar" aria-hidden="true"><span></span><span></span><span></span><i></i></div>
+      <h2 id="scanning-title">Scanning</h2>
+      <p id="scanning-step" class="muted">Starting the engine</p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>

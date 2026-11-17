@@ -1,0 +1,11 @@
+# Example WallScope policy. Check a report against it with:
+#   python -m wallscope check reports/latest.json --policy examples/policy.toml
+# The command exits with code 2 when any rule is violated, so it can gate a pipeline.
+
+[policy]
+max_risk_score = 40              # fail if the overall risk score is higher than this
+fail_on = "high"                 # fail on any finding at this severity or above
+require_local_firewall = true    # the host firewall must be confirmed active
+require_waf = true               # every checked URL must sit behind a WAF
+forbidden_open_ports = [23, 445, 3389, 5900]
+ignore = []                      # finding IDs to leave out, e.g. ["NET-002"]

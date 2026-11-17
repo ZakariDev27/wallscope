@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>FirewallDetector.Core</RootNamespace>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Waf/waf-signatures.json" LogicalName="FirewallDetector.Core.Waf.waf-signatures.json" />
+  </ItemGroup>
+</Project>
